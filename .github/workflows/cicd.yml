@@ -135,21 +135,21 @@ jobs:
       run: |
         export ENVIRONMENT=${{ needs.build1.outputs.autoDeployEnv }}
         export ARGOCD_BRANCH=${{ needs.build1.outputs.autoDeployBranch }}
-        export VALUE_FILE_DIR="values/ads-job"
-        export VALUE_FILE=${VALUE_FILE_DIR}/ads-job-03-${ARGOCD_BRANCH}-image-tag.yaml
+        export VALUE_FILE_DIR="values/ads-jobs"
+        export VALUE_FILE=${VALUE_FILE_DIR}/ads-jobs-03-${ARGOCD_BRANCH}-image-tag.yaml
         export IMAGE_TAG1=${{ needs.build1.outputs.imageTag }}
         git config --global user.email "cicd-auto@ads.com"
         git config --global user.name "CICD"
 
-        #git clone "https://cicd-token:${GH_TOKEN}@github.com/rtaf-soc/rtarf-ads-argocd-apps" deployment
-        #cd deployment
-        #git checkout ${ARGOCD_BRANCH}
-        #cp ${VALUE_FILE_DIR}/ads-job-02-image-tag-template.yaml ${VALUE_FILE}
-        #sed -i "s#<<image-tag>>#${IMAGE_TAG1}#g" ${VALUE_FILE}
-        #ls -lrt
-        #cat ${VALUE_FILE}
+        git clone "https://cicd-token:${GH_TOKEN}@github.com/rtaf-soc/rtarf-ads-argocd-apps" deployment
+        cd deployment
+        git checkout ${ARGOCD_BRANCH}
+        cp ${VALUE_FILE_DIR}/ads-jobs-02-image-tag-template.yaml ${VALUE_FILE}
+        sed -i "s#<<image-tag>>#${IMAGE_TAG1}#g" ${VALUE_FILE}
+        ls -lrt
+        cat ${VALUE_FILE}
 
-        #git add ${VALUE_FILE}; git commit --m "Update image tag by auto deploy script"; git push
+        git add ${VALUE_FILE}; git commit --m "Update image tag by auto deploy script"; git push
 
     - name: Slack notification end
       if: always()
