@@ -19,8 +19,7 @@ puts("INFO - Starting program to load blacklist data to cache...")
 begin
   redis = Redis.new(
     :host => ENV["REDIS_HOST"],
-    :port => ENV["REDIS_PORT"],
-    :password => ENV["REDIS_PASSWORD"]
+    :port => ENV["REDIS_PORT"]
   )
 
   client_ping = redis.ping
