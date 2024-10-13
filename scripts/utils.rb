@@ -1,6 +1,17 @@
 require 'json'
 require "base64"
 require 'net/http'
+require 'redis'
+
+def load_cache(redisObj, key, value, ttlSec)
+  redisObj.setex(key, ttlSec, value)
+  testValue = redisObj.get(key)
+
+  if (value != testValue)
+    puts("ERROR : Unable to load cache with key [#{key}]\n")
+    exit 100
+  end
+end
 
 def get_api_key(endpointObj)
   userVarName = endpointObj['basicAuthenUserEnvVar']
