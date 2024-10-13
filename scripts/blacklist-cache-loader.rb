@@ -4,6 +4,7 @@ require 'json'
 require "base64"
 require 'net/http'
 require './utils'
+require 'redis'
 
 if File.exist?('env.rb')
   #Default environment variables
@@ -14,10 +15,25 @@ $stdout.sync = true
 
 puts("INFO - Starting program to load blacklist data to cache...")
 
-def fetch_and_load_data(orgId, apiName, apiObj, endpointObj, dataObj)
+##### Main #####
+begin
+  redis = Redis.new(
+    :host => ENV["REDIS_HOST"],
+    :port => ENV["REDIS_PORT"],
+    :password => ENV["REDIS_PASSWORD"]
+  )
+
+  client_ping = redis.ping
+  if (client_ping)
+    puts("INFO : Connected to Redis [#{ENV["REDIS_HOST"]}]")
+  else
+    raise 'Ping failed!!!'
+  end
+rescue => e
+  puts("ERROR: #{e}")
+  exit 100
 end
 
-##### Main #####
 orgId = ENV["ORG_ID"]
 getListApiName = 'GetBlacklists'
 getCountApiName = 'GetBlacklistCount'
@@ -46,7 +62,6 @@ endpointObj['uri'] = ENV['API_ENDPOINT']
 endpointObj['basicAuthenUserEnvVar'] = 'API_AUTHEN_USER'
 endpointObj['basicAuthenPasswordEnvVar'] = 'API_AUTHEN_PASSWORD'
 
-#status, responseStr = invoke_api(orgId, apiName, apiObj, endpointObj, dataObj)
 
 status, responseStr = invoke_api(orgId, getCountApiName, getCountApiObj, endpointObj, dataObj)
 if (status != '200')
@@ -89,7 +104,13 @@ for page in 1..pageCount do
 
   for item in dataArr
     code = item['blacklistCode']
-    puts("INFO : ### Loading blacklist item [#{code}] to cache...\n")
+    type = item['blacklistType']
+    blackListJsonStr = item.to_json
+
+    key = "#{orgId}:blacklist:#{type}:#{code}"
+
+    puts("INFO : ### Loading blacklist item [#{key}] to cache...\n")
+    #load_cache(redis, key, blackListJsonStr, ENV["CACHE_TTL_SEC"].to_i)
 
     totalLoad = totalLoad + 1
   end
