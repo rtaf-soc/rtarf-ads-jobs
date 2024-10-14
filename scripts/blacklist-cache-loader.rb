@@ -109,7 +109,7 @@ for page in 1..pageCount do
     key = "#{orgId}:blacklist:#{type}:#{code}"
 
     puts("INFO : ### Loading blacklist item [#{key}] to cache...\n")
-    #load_cache(redis, key, blackListJsonStr, ENV["CACHE_TTL_SEC"].to_i)
+    load_cache(redis, key, blackListJsonStr, ENV["CACHE_TTL_SEC"].to_i)
 
     totalLoad = totalLoad + 1
   end
