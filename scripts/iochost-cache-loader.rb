@@ -74,7 +74,7 @@ end
 
 recordPerPage = 100
 ipMapCount = responseStr.to_i
-puts("INFO : Got total [#{ipMapCount}] records of blacklist\n")
+puts("INFO : Got total [#{ipMapCount}] records of IOC host\n")
 
 pageCount = ipMapCount / recordPerPage
 if ((ipMapCount % recordPerPage) > 0)
