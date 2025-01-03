@@ -23,7 +23,7 @@ def load_log_aggregate(redisObj, aggrType)
       type, keyword = key.split(":")
 
       cnt = cnt + 1
-      puts("DEBUG : Loading [#{type}] [#{keyword}]\n")
+      puts("DEBUG : Loading [#{type}] [#{keyword}] [#{aggrCount}]\n")
   end
 
   puts("DEBUG : Done loading [#{cnt}] records from Redis\n")
