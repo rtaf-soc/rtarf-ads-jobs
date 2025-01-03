@@ -6,4 +6,4 @@ RUN apt-get install -y wget curl zip unzip apt-transport-https ca-certificates g
 WORKDIR /scripts
 COPY scripts/ .
 
-RUN gem install redis
+RUN gem install redis elasticsearch
