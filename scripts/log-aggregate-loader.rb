@@ -72,12 +72,16 @@ end
 
 aggrTypeNetwork = ENV['AGGR_TYPE_NETWORK']
 
-conn = connect_db(ENV["PG_HOST"], ENV["PG_DB"], ENV["PG_USER"], ENV["PG_PASSWORD"])
+pgHost = ENV["PG_HOST"]
+pgDb = ENV["PG_DB"]
+
+conn = connect_db(pgHost, pgDb, ENV["PG_USER"], ENV["PG_PASSWORD"])
 if (conn.nil?)
-  puts("ERROR : ### Unable to connect to PostgreSQL [#{ENV["PG_HOST"]}] [#{ENV["PG_DB"]}]")
+  puts("ERROR : ### Unable to connect to PostgreSQL!!! [#{pgHost}] [#{pgDb}]")
   exit 101
 end
 
+puts("INFO : ### Connect to PostgreSQL [#{pgHost}] [#{pgDb}]")
 totalLoad = load_log_aggregate(redis, aggrTypeNetwork)
 
 puts("INFO : ### Done loading [#{totalLoad}] records to PostgreSQL\n")
