@@ -5,6 +5,7 @@ require "base64"
 require 'net/http'
 require './utils'
 require 'redis'
+require 'pg'
 
 if File.exist?('env.rb')
   #Default environment variables
@@ -28,6 +29,20 @@ def load_log_aggregate(redisObj, aggrType)
 
   puts("DEBUG : Done loading [#{cnt}] records from Redis\n")
   return cnt
+end
+
+def connect_db(host, db, user, password)
+  begin
+      con = PG.connect(:host => host, 
+          :dbname => db, 
+          :user => user, 
+          :password => password)
+
+  rescue PG::Error => e
+      puts("ERROR - Connect to DB [#{e.message}]")
+  end
+
+  return con
 end
 
 ###### Main #####
@@ -56,6 +71,13 @@ if (mode != 'local')
 end
 
 aggrTypeNetwork = ENV['AGGR_TYPE_NETWORK']
+
+conn = connect_db(ENV["PG_HOST"], ENV["PG_DB"], ENV["PG_USER"], ENV["PG_PASSWORD"])
+if (conn.nil?)
+  puts("ERROR : ### Unable to connect to PostgreSQL [#{ENV["PG_HOST"]}] [#{ENV["PG_DB"]}]")
+  exit 101
+end
+
 totalLoad = load_log_aggregate(redis, aggrTypeNetwork)
 
 puts("INFO : ### Done loading [#{totalLoad}] records to PostgreSQL\n")
