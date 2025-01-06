@@ -14,7 +14,18 @@ end
 
 $stdout.sync = true
 
-def load_log_aggregate(redisObj, aggrType)
+def upsertData(dbConn, type, keyword, aggrCount, seq)
+  # 20250106_logstash1-aggregator-cache-loader-2_zeek.dns^1.179.227.84^173.245.59.167^dns^udp
+
+  dateStr, aggregatorPod, attributes = keyword.split("_")
+  dataSet, srcIp, dstIp, protocol, transport = attributes.split("^")
+  srtNetwork = ""
+  dstNetwork = ""
+
+  puts("INFO : [#{seq}] [#{dateStr}] [#{aggregatorPod}] [#{dataSet}] [#{srcIp}] [#{dstIp}] [#{protocol}] [#{transport}]")
+end
+
+def load_log_aggregate(dbConn, redisObj, aggrType)
   puts("DEBUG : Start loading log aggregate [#{aggrType}] from Redis...\n")
 
   cnt = 0
@@ -24,7 +35,9 @@ def load_log_aggregate(redisObj, aggrType)
       type, keyword = key.split(":")
 
       cnt = cnt + 1
-      puts("DEBUG : Loading [#{type}] [#{keyword}] [#{aggrCount}]\n")
+      puts("DEBUG : [#{cnt}] Loading [#{type}] [#{keyword}] [#{aggrCount}]\n")
+
+      upsertData(dbConn, type, keyword, aggrCount, cnt)
   end
 
   puts("DEBUG : Done loading [#{cnt}] records from Redis\n")
@@ -82,6 +95,6 @@ if (conn.nil?)
 end
 
 puts("INFO : ### Connect to PostgreSQL [#{pgHost}] [#{pgDb}]")
-totalLoad = load_log_aggregate(redis, aggrTypeNetwork)
+totalLoad = load_log_aggregate(conn, redis, aggrTypeNetwork)
 
 puts("INFO : ### Done loading [#{totalLoad}] records to PostgreSQL\n")
