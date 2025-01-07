@@ -28,7 +28,7 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
 
   begin
     dbConn.transaction do |con|
-        con.exec "INSERT INTO \"public.LogAggregates\" 
+        con.exec "INSERT INTO \"LogAggregates\" 
         (
           log_aggregate_id,
           event_date,
@@ -72,6 +72,7 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
     end
   rescue PG::Error => e
     puts("ERROR - Insert data to DB upsertData() [#{e.message}]")
+    exit 102 # Terminate immediately
   end
 end
 
