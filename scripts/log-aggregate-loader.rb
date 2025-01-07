@@ -28,7 +28,7 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
 
   begin
     dbConn.transaction do |con|
-        con.exec "INSERT INTO LogAggregates 
+        con.exec "INSERT INTO \"public.LogAggregates\" 
         (
           log_aggregate_id,
           event_date,
