@@ -18,13 +18,11 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
   # 20250106_logstash1-aggregator-cache-loader-2_zeek.dns^1.179.227.84^173.245.59.167^dns^udp
 
   dateStr, aggregatorPod, attributes = keyword.split("_")
-  dataSet, srcIp, dstIp, protocol, transport = attributes.split("^")
-  srcNetwork = ""
-  dstNetwork = ""
+  dataSet, srcNetwork, dstNetwork, protocol, transport = attributes.split("^")
   loaderName = "log-aggregate-loader.rb"
   orgId = "default"
 
-  puts("INFO : [#{seq}] [#{type}] [#{dateStr}] [#{aggregatorPod}] [#{dataSet}] [#{srcIp}] [#{dstIp}] [#{protocol}] [#{transport}]")
+  puts("INFO : [#{seq}] [#{type}] [#{dateStr}] [#{aggregatorPod}] [#{dataSet}] [#{srcNetwork}] [#{dstNetwork}] [#{protocol}] [#{transport}]")
 
   begin
     dbConn.transaction do |con|
@@ -56,9 +54,9 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
             '#{dataSet}',
             '#{aggregatorPod}',
             '#{loaderName}',
-            '#{srcIp}',
+            '',
             '#{srcNetwork}',
-            '#{dstIp}',
+            '',
             '#{dstNetwork}',
             '#{protocol}',
             '#{transport}',
