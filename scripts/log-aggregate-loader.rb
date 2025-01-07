@@ -19,10 +19,60 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
 
   dateStr, aggregatorPod, attributes = keyword.split("_")
   dataSet, srcIp, dstIp, protocol, transport = attributes.split("^")
-  srtNetwork = ""
+  srcNetwork = ""
   dstNetwork = ""
+  loaderName = "log-aggregate-loader.rb"
+  orgId = "default"
 
-  puts("INFO : [#{seq}] [#{dateStr}] [#{aggregatorPod}] [#{dataSet}] [#{srcIp}] [#{dstIp}] [#{protocol}] [#{transport}]")
+  puts("INFO : [#{seq}] [#{type}] [#{dateStr}] [#{aggregatorPod}] [#{dataSet}] [#{srcIp}] [#{dstIp}] [#{protocol}] [#{transport}]")
+
+  begin
+    dbConn.transaction do |con|
+        con.exec "INSERT INTO LogAggregates 
+        (
+          log_aggregate_id,
+          event_date,
+          org_id,
+          cache_key,
+          data_set,
+          aggregator_name,
+          loader_name,
+          source_ip,
+          source_network,
+          destination_ip,
+          destination_network,
+          protocol,
+          transport,
+          evnet_count,
+          created_date,
+          aggregator_type
+        )
+        VALUES
+        (
+            gen_random_uuid(),
+            TO_DATE('#{dateStr}', 'YYYYMMDD'),
+            '#{orgId}',
+            '#{keyword}',
+            '#{dataSet}',
+            '#{aggregatorPod}',
+            '#{loaderName}',
+            '#{srcIp}',
+            '#{srcNetwork}',
+            '#{dstIp}',
+            '#{dstNetwork}',
+            '#{protocol}',
+            '#{transport}',
+             #{aggrCount},
+             current_timestamp,
+            '#{type}'
+        )
+        ON CONFLICT(cache_key)
+        DO UPDATE SET evnet_count = #{aggrCount}
+        "
+    end
+  rescue PG::Error => e
+    puts("ERROR - Insert data to DB upsertData() [#{e.message}]")
+  end
 end
 
 def load_log_aggregate(dbConn, redisObj, aggrType)
@@ -35,7 +85,7 @@ def load_log_aggregate(dbConn, redisObj, aggrType)
       type, keyword = key.split(":")
 
       cnt = cnt + 1
-      puts("DEBUG : [#{cnt}] Loading [#{type}] [#{keyword}] [#{aggrCount}]\n")
+      #puts("DEBUG : [#{cnt}] Loading [#{type}] [#{keyword}] [#{aggrCount}]\n")
 
       upsertData(dbConn, type, keyword, aggrCount, cnt)
   end
