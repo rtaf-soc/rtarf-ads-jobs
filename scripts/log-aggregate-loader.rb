@@ -18,12 +18,28 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
   # 20250106_logstash1-aggregator-cache-loader-2_zeek.dns^1.179.227.84^173.245.59.167^dns^udp
 
   dateStr, aggregatorPod, attributes = keyword.split("_")
-  dataSet, srcNetwork, dstNetwork, protocol, transport = attributes.split("^")
+
+  dataSet = ''
+  srcNetwork = '' 
+  dstNetwork = '' 
+  protocol = '' 
+  transport = ''
+  mispTlp = ''
+  mitrPattern = ''
+
+  if (type == 'aggr_network_v3')
+    dataSet, srcNetwork, dstNetwork, protocol, transport = attributes.split("^")
+  elsif (type == 'aggr_network_mitr_dst_ip_v1')
+      dataSet, srcNetwork, dstNetwork, protocol, transport, mispTlp, mitrPattern = attributes.split("^")
+  elsif (type == 'aggr_network_mitr_src_ip_v1')
+    dataSet, srcNetwork, dstNetwork, protocol, transport, mispTlp, mitrPattern = attributes.split("^")
+  end
+
   loaderName = "log-aggregate-loader.rb"
   orgId = "default"
 
-  puts("INFO : [#{seq}] [#{type}] [#{dateStr}] [#{aggregatorPod}] [#{dataSet}] [#{srcNetwork}] [#{dstNetwork}] [#{protocol}] [#{transport}] -> [#{aggrCount}]")
-
+  puts("INFO : [#{seq}] [#{type}] [#{dateStr}] [#{aggregatorPod}] [#{attributes}] --> [#{aggrCount}]")
+  
   begin
     dbConn.transaction do |con|
         con.exec "INSERT INTO \"LogAggregates\" 
@@ -41,6 +57,8 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
           destination_network,
           protocol,
           transport,
+          mitr_attack_pattern,
+          misp_threat_level,
           evnet_count,
           created_date,
           aggregator_type
@@ -60,6 +78,8 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
             '#{dstNetwork}',
             '#{protocol}',
             '#{transport}',
+            '#{mitrPattern}',
+            '#{mispTlp}',
              #{aggrCount},
              current_timestamp,
             '#{type}'
@@ -132,7 +152,7 @@ if (mode != 'local')
   end
 end
 
-aggrTypeNetwork = ENV['AGGR_TYPE_NETWORK']
+#aggrTypeNetwork = ENV['AGGR_TYPE_NETWORK']
 
 pgHost = ENV["PG_HOST"]
 pgDb = ENV["PG_DB"]
@@ -144,6 +164,15 @@ if (conn.nil?)
 end
 
 puts("INFO : ### Connect to PostgreSQL [#{pgHost}] [#{pgDb}]")
-totalLoad = load_log_aggregate(conn, redis, aggrTypeNetwork)
 
-puts("INFO : ### Done loading [#{totalLoad}] records to PostgreSQL\n")
+type = 'aggr_network_v3'
+totalLoad = load_log_aggregate(conn, redis, type)
+puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+
+type = 'aggr_network_mitr_dst_ip_v1'
+totalLoad = load_log_aggregate(conn, redis, type)
+puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+
+type = 'aggr_network_mitr_src_ip_v1'
+totalLoad = load_log_aggregate(conn, redis, type)
+puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
