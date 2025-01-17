@@ -33,6 +33,10 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
       dataSet, srcNetwork, dstNetwork, protocol, transport, mispTlp, mitrPattern = attributes.split("^")
   elsif (type == 'aggr_network_mitr_src_ip_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport, mispTlp, mitrPattern = attributes.split("^")
+  elsif (type == 'aggr_network_misp_dst_ip_tlp_v1')
+    dataSet, srcNetwork, dstNetwork, protocol, transport, mispTlp = attributes.split("^")
+  elsif (type == 'aggr_network_misp_src_ip_tlp_v1')
+    dataSet, srcNetwork, dstNetwork, protocol, transport, mispTlp = attributes.split("^")
   end
 
   loaderName = "log-aggregate-loader.rb"
@@ -174,5 +178,13 @@ totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
 
 type = 'aggr_network_mitr_src_ip_v1'
+totalLoad = load_log_aggregate(conn, redis, type)
+puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+
+type = 'aggr_network_misp_dst_ip_tlp_v1'
+totalLoad = load_log_aggregate(conn, redis, type)
+puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+
+type = 'aggr_network_misp_src_ip_tlp_v1'
 totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
