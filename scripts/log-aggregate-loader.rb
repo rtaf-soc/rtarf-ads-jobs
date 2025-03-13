@@ -65,7 +65,8 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
           misp_threat_level,
           evnet_count,
           created_date,
-          aggregator_type
+          aggregator_type,
+          yyyymmdd
         )
         VALUES
         (
@@ -86,7 +87,8 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
             '#{mispTlp}',
              #{aggrCount},
              current_timestamp,
-            '#{type}'
+            '#{type}',
+            '#{dateStr}'
         )
         ON CONFLICT(cache_key)
         DO UPDATE SET evnet_count = #{aggrCount}
