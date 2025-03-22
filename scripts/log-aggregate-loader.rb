@@ -43,6 +43,9 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
     dataSet, srcNetwork, dstNetwork, protocol, transport, srcIp, dstIp = attributes.split("^")
   elsif (type == 'aggr_network_blacklist_src_ip_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport, srcIp, dstIp = attributes.split("^")
+  elsif (type == 'aggr_crowdstrike_incident_v1')
+    dataSet, srcNetwork, dstNetwork, protocol, transport, 
+    csEventName, csIncidentType, csComputerName, csUserName, csDetectName, csFileName, csIocType, csLocalIp = attributes.split("^")
   end
 
   loaderName = "log-aggregate-loader.rb"
@@ -54,25 +57,33 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
     dbConn.transaction do |con|
         con.exec "INSERT INTO \"LogAggregates\" 
         (
-          log_aggregate_id,
-          event_date,
-          org_id,
-          cache_key,
-          data_set,
-          aggregator_name,
-          loader_name,
-          source_ip,
-          source_network,
-          destination_ip,
-          destination_network,
-          protocol,
-          transport,
-          mitr_attack_pattern,
-          misp_threat_level,
-          evnet_count,
-          created_date,
-          aggregator_type,
-          yyyymmdd
+            log_aggregate_id,
+            event_date,
+            org_id,
+            cache_key,
+            data_set,
+            aggregator_name,
+            loader_name,
+            source_ip,
+            source_network,
+            destination_ip,
+            destination_network,
+            protocol,
+            transport,
+            mitr_attack_pattern,
+            misp_threat_level,
+            evnet_count,
+            created_date,
+            aggregator_type,
+            yyyymmdd,
+            cs_event_name,
+            cs_incident_type,
+            cs_computer_name,
+            cs_user_name,
+            cs_detect_name,
+            cs_file_name,
+            cs_ioc_type,
+            cs_local_ip
         )
         VALUES
         (
@@ -94,7 +105,15 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
              #{aggrCount},
              current_timestamp,
             '#{type}',
-            '#{dateStr}'
+            '#{dateStr}',
+            '#{csEventName}',
+            '#{csIncidentType}',
+            '#{csComputerName}',
+            '#{csUserName}',
+            '#{csDetectName}',
+            '#{csFileName}',
+            '#{csIocType}',
+            '#{csLocalIp}'
         )
         ON CONFLICT(cache_key)
         DO UPDATE SET evnet_count = #{aggrCount}
@@ -202,5 +221,9 @@ totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
 
 type = 'aggr_network_blacklist_src_ip_v1'
+totalLoad = load_log_aggregate(conn, redis, type)
+puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+
+type = 'aggr_crowdstrike_incident_v1'
 totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
