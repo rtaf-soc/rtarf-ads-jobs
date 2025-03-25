@@ -17,7 +17,7 @@ $stdout.sync = true
 def upsertData(dbConn, type, keyword, aggrCount, seq)
   # 20250106_logstash1-aggregator-cache-loader-2_zeek.dns^1.179.227.84^173.245.59.167^dns^udp
 
-  dateStr, aggregatorPod, attributes = keyword.split("_")
+  dateStr, aggregatorPod, attributes = keyword.split("%%")
 
   dataSet = ''
   srcNetwork = '' 
@@ -193,7 +193,7 @@ def load_log_aggregate(dbConn, redisObj, aggrType)
   redisObj.scan_each(match: "#{aggrType}!*") do |key|
       aggrCount = redisObj.get(key)
 
-      type, keyword = key.split("!")
+      type, keyword = key.split("!!")
 
       cnt = cnt + 1
       puts("DEBUG_00 : [#{cnt}] Loading [#{type}] [#{key}] [#{keyword}] [#{aggrCount}]\n")
