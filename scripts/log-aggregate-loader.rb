@@ -28,6 +28,21 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
   mitrPattern = ''
   srcIp = ''
   dstIp = ''
+  customField1 = ''
+  customField2 = ''
+  customField3 = ''
+  customField4 = ''
+  customField5 = ''
+  customField6 = ''
+  customField7 = ''
+  customField8 = ''
+  customField9 = ''
+  customField10 = ''
+  customField11 = ''
+  customField12 = ''
+  customField13 = ''
+  customField14 = ''
+  customField15 = ''
 
   if (type == 'aggr_network_v3')
     dataSet, srcNetwork, dstNetwork, protocol, transport = attributes.split("^")
@@ -46,6 +61,22 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
   elsif (type == 'aggr_crowdstrike_incident_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport, 
     csEventName, csIncidentType, csComputerName, csUserName, csDetectName, csFileName, csIocType, csLocalIp = attributes.split("^")
+  elsif (type == 'aggr_zeek_intel_v1')
+    dataSet, srcNetwork, dstNetwork, protocol, transport, srcIp, dstIp,
+    customField1, customField2, customField3, customField4, customField5 = attributes.split("^")
+    #intelMatched,intelSeenIndicator,intelSeenType,intelSeenWhere
+  elsif (type == 'aggr_zeek_suricata_v1')
+    dataSet, srcNetwork, dstNetwork, protocol, transport, srcIp, dstIp,
+    customField1, customField2, customField3 = attributes.split("^")
+    #suricataPriority,suricataClass,suricataRule
+  elsif (type == 'aggr_zeek_weird_v1')
+    dataSet, srcNetwork, dstNetwork, protocol, transport, srcIp, dstIp,
+    customField1, customField2, customField3 = attributes.split("^")
+    #weirdRuleName,weirdName,weirdSource
+  elsif (type == 'aggr_zeek_dns_v1')
+    dataSet, srcNetwork, dstNetwork, protocol, transport,
+    customField1, customField2, customField3, customField4 = attributes.split("^") 
+    #dnsQuestionName,dnsRegisteredDomain,dnsQueryClassName,dnsQueryTypeName
   end
 
   loaderName = "log-aggregate-loader.rb"
@@ -83,7 +114,22 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
             cs_detect_name,
             cs_file_name,
             cs_ioc_type,
-            cs_local_ip
+            cs_local_ip,
+            custom_field1,
+            custom_field2,
+            custom_field3,
+            custom_field4,
+            custom_field5,
+            custom_field6,
+            custom_field7,
+            custom_field8,
+            custom_field9,
+            custom_field10,
+            custom_field11,
+            custom_field12,
+            custom_field13,
+            custom_field14,
+            custom_field15
         )
         VALUES
         (
@@ -113,7 +159,22 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
             '#{csDetectName}',
             '#{csFileName}',
             '#{csIocType}',
-            '#{csLocalIp}'
+            '#{csLocalIp}',
+            '#{customField1}',
+            '#{customField2}',
+            '#{customField3}',
+            '#{customField4}',
+            '#{customField5}',
+            '#{customField6}',
+            '#{customField7}',
+            '#{customField8}',
+            '#{customField9}',
+            '#{customField10}',
+            '#{customField11}',
+            '#{customField12}',
+            '#{customField13}',
+            '#{customField14}',
+            '#{customField15}'
         )
         ON CONFLICT(cache_key)
         DO UPDATE SET evnet_count = #{aggrCount}
@@ -225,5 +286,22 @@ totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
 
 type = 'aggr_crowdstrike_incident_v1'
+totalLoad = load_log_aggregate(conn, redis, type)
+puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+
+
+type = 'aggr_zeek_intel_v1'
+totalLoad = load_log_aggregate(conn, redis, type)
+puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+
+type = 'aggr_zeek_suricata_v1'
+totalLoad = load_log_aggregate(conn, redis, type)
+puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+
+type = 'aggr_zeek_weird_v1'
+totalLoad = load_log_aggregate(conn, redis, type)
+puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+
+type = 'aggr_zeek_dns_v1'
 totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
