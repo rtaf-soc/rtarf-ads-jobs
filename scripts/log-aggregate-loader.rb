@@ -196,7 +196,7 @@ def load_log_aggregate(dbConn, redisObj, aggrType)
       type, keyword = key.split(":")
 
       cnt = cnt + 1
-      #puts("DEBUG : [#{cnt}] Loading [#{type}] [#{keyword}] [#{aggrCount}]\n")
+      puts("DEBUG_00 : [#{cnt}] Loading [#{type}] [#{key}] [#{keyword}] [#{aggrCount}]\n")
 
       upsertData(dbConn, type, keyword, aggrCount, cnt)
   end
