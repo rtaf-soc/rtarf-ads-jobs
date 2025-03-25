@@ -15,9 +15,17 @@ end
 $stdout.sync = true
 
 def upsertData(dbConn, type, keyword, aggrCount, seq)
-  # 20250106_logstash1-aggregator-cache-loader-2_zeek.dns^1.179.227.84^173.245.59.167^dns^udp
+
+  if (keyword.nil?)
+    puts("INFO : [keyword] is null in upsertData()\n")
+    return
+  end
 
   dateStr, aggregatorPod, attributes = keyword.split("%%")
+  if (attributes.nil?)
+    puts("INFO : [attributes] is null in upsertData()\n")
+    return
+  end
 
   dataSet = ''
   srcNetwork = '' 
