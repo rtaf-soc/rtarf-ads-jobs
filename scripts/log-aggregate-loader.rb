@@ -64,7 +64,7 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
   elsif (type == 'aggr_zeek_intel_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport, srcIp, dstIp,
     customField1, customField2, customField3, customField4, customField5 = attributes.split("^")
-    #intelMatched,intelSeenIndicator,intelSeenType,intelSeenWhere
+    #intelMatched,intelSeenIndicator,intelSeenType,intelSeenWhere,intelSource
   elsif (type == 'aggr_zeek_suricata_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport, srcIp, dstIp,
     customField1, customField2, customField3 = attributes.split("^")
