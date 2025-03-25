@@ -190,10 +190,10 @@ def load_log_aggregate(dbConn, redisObj, aggrType)
   puts("DEBUG : Start loading log aggregate [#{aggrType}] from Redis...\n")
 
   cnt = 0
-  redisObj.scan_each(match: "#{aggrType}:*") do |key|
+  redisObj.scan_each(match: "#{aggrType}!*") do |key|
       aggrCount = redisObj.get(key)
 
-      type, keyword = key.split(":")
+      type, keyword = key.split("!")
 
       cnt = cnt + 1
       puts("DEBUG_00 : [#{cnt}] Loading [#{type}] [#{key}] [#{keyword}] [#{aggrCount}]\n")
