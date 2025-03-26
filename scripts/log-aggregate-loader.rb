@@ -15,7 +15,7 @@ end
 $stdout.sync = true
 
 def escape_char(str)
-  return str.tr("'", "")
+  return "#{str}".tr("'", "")
 end
 
 def upsertData(dbConn, type, keyword, aggrCount, seq)
