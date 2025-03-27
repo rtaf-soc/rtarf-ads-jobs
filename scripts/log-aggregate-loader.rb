@@ -314,6 +314,6 @@ type = 'aggr_zeek_weird_v1'
 totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
 
-#type = 'aggr_zeek_dns_v1'
-#totalLoad = load_log_aggregate(conn, redis, type)
-#puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+type = 'aggr_zeek_dns_v1'
+totalLoad = load_log_aggregate(conn, redis, type)
+puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
