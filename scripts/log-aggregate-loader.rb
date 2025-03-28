@@ -98,7 +98,7 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
   loaderName = "log-aggregate-loader.rb"
   orgId = "default"
 
-  puts("INFO : [#{seq}] [#{type}] [#{dateStr}] [#{aggregatorPod}] [#{attributes}] --> [#{aggrCount}]")
+  #puts("INFO : [#{seq}] [#{type}] [#{dateStr}] [#{aggregatorPod}] [#{attributes}] --> [#{aggrCount}]")
   
   begin
     dbConn.transaction do |con|
