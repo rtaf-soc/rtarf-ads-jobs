@@ -93,6 +93,15 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
     dataSet, srcNetwork, dstNetwork, protocol, transport,
     customField1, customField2, customField3, customField4, customField5 = attributes.split("^") 
     #requestMethod,urlDomain,userAgent,mimeType,httpStatus
+
+  elsif (type == 'aggr_zeek_radius_v1')
+    dataSet, srcNetwork, dstNetwork, protocol, transport,
+    customField1, customField2, customField3 = attributes.split("^") 
+    #userName,radiusStatus,connectInfo
+  elsif (type == 'aggr_zeek_kerberos_v1')
+    dataSet, srcNetwork, dstNetwork, protocol, transport,
+    customField1, customField2, customField3, customField4 = attributes.split("^") 
+    #message,client,service,isSuccess
   end
 
   loaderName = "log-aggregate-loader.rb"
@@ -323,5 +332,15 @@ totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
 
 type = 'aggr_zeek_http_v1'
+totalLoad = load_log_aggregate(conn, redis, type)
+puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+
+
+
+type = 'aggr_zeek_radius_v1'
+totalLoad = load_log_aggregate(conn, redis, type)
+puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+
+type = 'aggr_zeek_kerberos_v1'
 totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
