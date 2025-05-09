@@ -280,7 +280,7 @@ if (conn.nil?)
   exit 101
 end
 
-puts("INFO : ### Connect to PostgreSQL [#{pgHost}] [#{pgDb}]")
+puts("INFO : ### Connected to PostgreSQL [#{pgHost}] [#{pgDb}]")
 
 type = 'aggr_network_v3'
 totalLoad = load_log_aggregate(conn, redis, type)
