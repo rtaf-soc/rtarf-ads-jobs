@@ -14,6 +14,7 @@ end
 $stdout.sync = true
 
 hiveHost = ENV['HIVE_HOST']
+caseCount = ENV['HIVE_CASE_COUNT']
 
 # ใส่ข้อมูล TheHive server
 thehive_url = "http://#{hiveHost}/index.html#/login"
@@ -39,7 +40,7 @@ browser.button(text: /Sign In/i).click
 browser.goto("http://#{hiveHost}")
 sleep 3
 
-getCasesUrl = "http://#{hiveHost}/api/case?range=0-300"
+getCasesUrl = "http://#{hiveHost}/api/case?range=0-#{caseCount}"
 browser.goto("#{getCasesUrl}")
 sleep 3
 
