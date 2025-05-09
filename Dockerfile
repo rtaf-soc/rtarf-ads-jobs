@@ -8,6 +8,7 @@ RUN apt-get install chromium -y
 RUN wget -O /tmp/chromedriver-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/136.0.7103.92/linux64/chromedriver-linux64.zip
 RUN unzip /tmp/chromedriver-linux64.zip -d /tmp
 RUN cp /tmp/chromedriver-linux64/chromedriver /usr/local/bin/
+RUN ls -lrt /usr/local/bin/
 
 WORKDIR /scripts
 COPY scripts/ .
