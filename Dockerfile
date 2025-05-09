@@ -5,8 +5,8 @@ RUN apt-get install -y wget curl zip unzip apt-transport-https ca-certificates g
 RUN apt-get install chromium -y
 
 #RUN wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/2.46/chromedriver_linux64.zip
-RUN wget -O /tmp/chromedriver.zip https://storage.googleapis.com/chrome-for-testing-public/136.0.7103.92/linux64/chromedriver-linux64.zip
-RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
+RUN wget -O /tmp/chromedriver-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/136.0.7103.92/linux64/chromedriver-linux64.zip
+RUN unzip /tmp/chromedriver-linux64.zip chromedriver -d /usr/local/bin/
 
 WORKDIR /scripts
 COPY scripts/ .
