@@ -72,8 +72,8 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
     dataSet, srcNetwork, dstNetwork, protocol, transport, srcIp, dstIp = attributes.split("^")
   elsif (type == 'aggr_crowdstrike_incident_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport, 
-    csEventName, csIncidentType, csComputerName, csUserName, csDetectName, csFileName, csIocType, csLocalIp, customField1, customField2, customField3 = attributes.split("^")
-    #Custom Fields : category,serverityName,tags  
+    csEventName, csIncidentType, csComputerName, csUserName, csDetectName, csFileName, csIocType, csLocalIp, customField1, customField2, customField3, customField4 = attributes.split("^")
+    #Custom Fields : category,serverityName,tags,eventType
   elsif (type == 'aggr_zeek_intel_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport, srcIp, dstIp,
     customField1, customField2, customField3, customField4, customField5 = attributes.split("^")
@@ -109,12 +109,12 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
     #cookie,result,securityProtocol
   elsif (type == 'aggr_zeek_smb_files_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport,
-    customField1, customField2 = attributes.split("^")
-    #fileName,action
+    customField1, customField2, customField3 = attributes.split("^")
+    #fileName,action,filePath
   elsif (type == 'aggr_zeek_ftp_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport,
-    customField1, customField2, customField3 = attributes.split("^")
-    #command,replyCode,ftpUser
+    customField1, customField2, customField3, customField4 = attributes.split("^")
+    #command,replyCode,ftpUser,ftpArgs
   elsif (type == 'aggr_zeek_smtp_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport,
     customField1, customField2 = attributes.split("^")
