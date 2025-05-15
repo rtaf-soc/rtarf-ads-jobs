@@ -72,8 +72,10 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
     dataSet, srcNetwork, dstNetwork, protocol, transport, srcIp, dstIp = attributes.split("^")
   elsif (type == 'aggr_crowdstrike_incident_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport, 
-    csEventName, csIncidentType, csComputerName, csUserName, csDetectName, csFileName, csIocType, csLocalIp, customField1, customField2, customField3, customField4 = attributes.split("^")
-    #Custom Fields : category,serverityName,tags,eventType
+    csEventName, csIncidentType, csComputerName, csUserName, csDetectName, csFileName, csIocType, csLocalIp, 
+    customField1, customField2, customField3, customField4,
+    customField5, customField6, customField7, customField8, customField9 = attributes.split("^")
+    #Custom Fields : category,serverityName,tags,eventType, csTechnique,csTactic,csIncidentId,csFineScore,csFineScoreTxt
   elsif (type == 'aggr_zeek_intel_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport, srcIp, dstIp,
     customField1, customField2, customField3, customField4, customField5 = attributes.split("^")
