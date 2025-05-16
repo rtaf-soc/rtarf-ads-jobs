@@ -76,7 +76,7 @@ def loadMachineStatToDb(conn)
 
     puts("INFO : ### Updating [#{csComputerName}] count=[#{aggrCount}] to DB...\n")
 
-    obj = Hash.New()
+    obj = Hash.new()
     obj['name'] = csComputerName
     obj['lastSeenEventCount'] = aggrCount
     upsertMachineStatData(conn, obj, total)
