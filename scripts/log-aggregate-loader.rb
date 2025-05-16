@@ -15,6 +15,43 @@ end
 $stdout.sync = true
 $csMachineStats = Hash.new()
 
+def upsertMachineStatData(dbConn, obj, seq)
+  csComputerName = obj['name'] = 
+  aggrCount = obj['lastSeenEventCount']
+  orgId = "default"
+  
+  begin
+    dbConn.transaction do |con|
+        con.exec "INSERT INTO \"CsMachineStat\" 
+        (
+            machine_stat_id,
+            machine_name,
+            last_cs_event_date,
+            org_id,
+            cs_event_count,
+            created_date
+        )
+        VALUES
+        (
+            gen_random_uuid(),
+            '#{escape_char(csComputerName)}',
+            CURRENT_TIMESTAMP,
+            '#{escape_char(orgId)}',
+            #{aggrCount},
+            CURRENT_TIMESTAMP
+        )
+        ON CONFLICT(machine_name)
+        DO UPDATE SET 
+          last_cs_event_date = CURRENT_TIMESTAMP,
+          cs_event_count = #{aggrCount}
+        "
+    end
+  rescue PG::Error => e
+    puts("ERROR - Insert data to DB upsertData() [#{e.message}]")
+    exit 102 # Terminate immediately
+  end
+end
+
 def populateMachineStat(csComputerName, aggrCount)
   if ((csComputerName.nil?) || (csComputerName == ""))
     return
@@ -32,14 +69,20 @@ end
 
 def loadMachineStatToDb(conn)
   total = 0
-  puts("INFO : ### Loading CS machine stat to DB...\n")
+  puts("INFO : ### Updating CS machine stat to DB...\n")
 
   $csMachineStats.each do |csComputerName, aggrCount|
-    puts("INFO : ### Loading [#{csComputerName}] count=[#{aggrCount}] to DB...\n")
     total = total + 1
+
+    puts("INFO : ### Updating [#{csComputerName}] count=[#{aggrCount}] to DB...\n")
+
+    obj = Hash.New()
+    obj['name'] = csComputerName
+    obj['lastSeenEventCount'] = aggrCount
+    upsertMachineStatData(conn, obj, total)
   end
 
-  puts("INFO : ### Done loading [#{total}] CS machine stat to DB\n")
+  puts("INFO : ### Done Updating [#{total}] CS machine stat to DB\n")
 end
 
 def escape_char(str)
