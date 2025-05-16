@@ -16,13 +16,17 @@ $stdout.sync = true
 $csMachineStats = Hash.new()
 
 def populateMachineStat(csComputerName, aggrCount)
+  if ((csComputerName.nil?) || (csComputerName == ""))
+    return
+  end
+
   hasFoundName = $csMachineStats.has_key?(csComputerName)
   if (!hasFoundName)
     # Create the new entry
-    $csMachineStats[csComputerName] = aggrCount
+    $csMachineStats[csComputerName] = aggrCount.to_i
   else
     currentSeenCount = $csMachineStats[csComputerName]
-    $csMachineStats[csComputerName] = currentSeenCount + aggrCount
+    $csMachineStats[csComputerName] = currentSeenCount + aggrCount.to_i
   end
 end
 
