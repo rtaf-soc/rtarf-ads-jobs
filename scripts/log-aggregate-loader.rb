@@ -13,6 +13,30 @@ if File.exist?('env.rb')
 end
 
 $stdout.sync = true
+$csMachineStats = Hash.new()
+
+def populateMachineStat(csComputerName, aggrCount)
+  hasFoundName = $csMachineStats.has_key?(csComputerName)
+  if (!hasFoundName)
+    # Create the new entry
+    $csMachineStats[csComputerName] = aggrCount
+  else
+    currentSeenCount = $csMachineStats[csComputerName]
+    $csMachineStats[csComputerName] = currentSeenCount + aggrCount
+  end
+end
+
+def loadMachineStatToDb(conn)
+  total = 0
+  puts("INFO : ### Loading CS machine stat to DB...\n")
+
+  $csMachineStats.each do |csComputerName, aggrCount|
+    puts("INFO : ### Loading [#{csComputerName}] count=[#{aggrCount}] to DB...\n")
+    total = total + 1
+  end
+
+  puts("INFO : ### Done loading [#{total}] CS machine stat to DB\n")
+end
 
 def escape_char(str)
   return "#{str}".tr("'", "")
@@ -76,6 +100,8 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
     customField1, customField2, customField3, customField4,
     customField5, customField6, customField7, customField8, customField9 = attributes.split("^")
     #Custom Fields : category,serverityName,tags,eventType, csTechnique,csTactic,csIncidentId,csFineScore,csFineScoreTxt
+
+    populateMachineStat(csComputerName, aggrCount)
   elsif (type == 'aggr_zeek_intel_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport, srcIp, dstIp,
     customField1, customField2, customField3, customField4, customField5 = attributes.split("^")
@@ -301,6 +327,13 @@ end
 
 puts("INFO : ### Connected to PostgreSQL [#{pgHost}] [#{pgDb}]")
 
+type = 'aggr_crowdstrike_incident_v1'
+totalLoad = load_log_aggregate(conn, redis, type)
+puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+# Onlye for aggr_crowdstrike_incident_v1
+loadMachineStatToDb(conn)
+
+
 type = 'aggr_network_v3'
 totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
@@ -326,10 +359,6 @@ totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
 
 type = 'aggr_network_blacklist_src_ip_v1'
-totalLoad = load_log_aggregate(conn, redis, type)
-puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
-
-type = 'aggr_crowdstrike_incident_v1'
 totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
 
