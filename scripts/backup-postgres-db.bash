@@ -32,4 +32,4 @@ ls -al ${TARGET_DIR}/${DMP_FILE}
 EXPORTED_FILE=${DST_DIR}/${DMP_FILE}
 GCS_PATH_DB=gs://${BUCKET_NAME}/ads-backup/${DMP_FILE}
 
-#gsutil cp ${EXPORTED_FILE} ${GCS_PATH_DB}
+gsutil cp ${EXPORTED_FILE} ${GCS_PATH_DB}
