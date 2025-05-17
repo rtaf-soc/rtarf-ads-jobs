@@ -3,9 +3,14 @@
 echo "BACKUP_NAME_PREFIX = [${BACKUP_NAME_PREFIX}]"
 echo "EXTENSION = [${EXTENSION}]"
 
-
 NAME_PREFIX=${BACKUP_NAME_PREFIX}
 EXT=${EXTENSION}
+
+FOLDER=${GCS_FOLDER}
+if [ -z "${FOLDER}" ]; then
+    FOLDER="ads-backup"
+fi
+
 #TARGET_NS=ads-prod
 #TARGET_POD=postgresql-ads-prod
 
@@ -30,6 +35,6 @@ kubectl cp -n ${TARGET_NS} ${TARGET_POD}:/${TARGET_DIR}/${DMP_FILE} ${DST_DIR}/$
 ls -al ${TARGET_DIR}/${DMP_FILE}
 
 EXPORTED_FILE=${DST_DIR}/${DMP_FILE}
-GCS_PATH_DB=gs://${BUCKET_NAME}/ads-backup/${DMP_FILE}
+GCS_PATH_DB=gs://${BUCKET_NAME}/${FOLDER}/${DMP_FILE}
 
 gsutil cp ${EXPORTED_FILE} ${GCS_PATH_DB}
