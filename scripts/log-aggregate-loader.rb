@@ -16,7 +16,7 @@ $stdout.sync = true
 $csMachineStats = Hash.new()
 
 def upsertMachineStatData(dbConn, obj, seq)
-  csComputerName = obj['name'] = 
+  csComputerName = obj['name']
   aggrCount = obj['lastSeenEventCount']
   orgId = "default"
   
