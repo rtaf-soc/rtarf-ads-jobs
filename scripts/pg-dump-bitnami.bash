@@ -1,8 +1,8 @@
 #!/bin/bash
 
-POSTGRES_USER=$1
-OUT_FILE_NAME=$2
-TARGET_DIR=$3
+POSTGRES_USER=$0
+OUT_FILE_NAME=$1
+TARGET_DIR=$2
 
 DB=${POSTGRES_DB}
 if [ -z "${DB}" ]; then
