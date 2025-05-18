@@ -27,7 +27,7 @@ echo "Copying [${SCRIPT_FILE}] into pod=[${TARGET_POD}], namespace=[${TARGET_NS}
 kubectl cp ${SCRIPT_FILE} -n ${TARGET_NS} ${TARGET_POD}:/${TARGET_DIR}/
 
 echo "Running [${SCRIPT_FILE}] in pod=[${TARGET_POD}], namespace=[${TARGET_NS}]"
-kubectl exec -it -n ${TARGET_NS} ${TARGET_POD} -- bash ${TARGET_DIR}/${SCRIPT_FILE} ${PG_USER} ${DMP_FILE} ${TARGET_DIR}
+kubectl exec -i -n ${TARGET_NS} ${TARGET_POD} -- bash ${TARGET_DIR}/${SCRIPT_FILE} ${PG_USER} ${DMP_FILE} ${TARGET_DIR}
 
 echo "Copying [${DMP_FILE}] in pod=[${TARGET_POD}], namespace=[${TARGET_NS}] to [${DST_DIR}]"
 kubectl cp -n ${TARGET_NS} ${TARGET_POD}:/${TARGET_DIR}/${DMP_FILE} ${DST_DIR}/${DMP_FILE}
