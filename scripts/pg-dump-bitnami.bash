@@ -17,4 +17,4 @@ echo "TARGET_DIR=[${TARGET_DIR}]"
 echo "DB=[${DB}]"
 
 cd ${TARGET_DIR}
-pg_dump -c --dbname="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:5432/${DB}" > ${OUT_FILE_NAME}
+pg_dump -c --no-owner --dbname="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:5432/${DB}" > ${OUT_FILE_NAME}
