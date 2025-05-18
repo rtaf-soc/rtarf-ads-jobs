@@ -17,4 +17,7 @@ echo "TARGET_DIR=[${TARGET_DIR}]"
 echo "DB=[${DB}]"
 
 cd ${TARGET_DIR}
+# Delete the previous backup file
+rm -f *.sql *.gz
 pg_dump -c --no-owner --dbname="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:5432/${DB}" > ${OUT_FILE_NAME}
+gzip ${OUT_FILE_NAME}
