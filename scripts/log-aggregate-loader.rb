@@ -18,6 +18,7 @@ $csMachineStats = Hash.new()
 def upsertMachineStatData(dbConn, obj, seq)
   csComputerName = obj['name']
   aggrCount = obj['lastSeenEventCount']
+  zone = obj['zone']
   orgId = "default"
   
   begin
@@ -29,6 +30,7 @@ def upsertMachineStatData(dbConn, obj, seq)
             last_cs_event_date,
             org_id,
             cs_event_count,
+            department_name,
             created_date
         )
         VALUES
@@ -38,11 +40,13 @@ def upsertMachineStatData(dbConn, obj, seq)
             CURRENT_TIMESTAMP,
             '#{escape_char(orgId)}',
             #{aggrCount},
+            '#{escape_char(zone)}',
             CURRENT_TIMESTAMP
         )
         ON CONFLICT(machine_name)
         DO UPDATE SET 
           last_cs_event_date = CURRENT_TIMESTAMP,
+          department_name = '#{escape_char(zone)}',
           cs_event_count = #{aggrCount}
         "
     end
@@ -52,18 +56,28 @@ def upsertMachineStatData(dbConn, obj, seq)
   end
 end
 
-def populateMachineStat(csComputerName, aggrCount)
+def populateMachineStat(csComputerName, srcNetwork, aggrCount)
   if ((csComputerName.nil?) || (csComputerName == ""))
     return
+  end
+
+  srcZone = srcNetwork
+  if ((srcNetwork.nil?) || (srcNetwork == ""))
+    srcZone = "==unknown=="
   end
 
   hasFoundName = $csMachineStats.has_key?(csComputerName)
   if (!hasFoundName)
     # Create the new entry
-    $csMachineStats[csComputerName] = aggrCount.to_i
+    $csMachineStats[csComputerName] = { 'zone' => srcZone ,'aggrCount' => aggrCount.to_i }
   else
-    currentSeenCount = $csMachineStats[csComputerName]
-    $csMachineStats[csComputerName] = currentSeenCount + aggrCount.to_i
+    obj = $csMachineStats[csComputerName]
+    currentSeenCount = obj['aggrCount'].to_i
+
+    obj['zone'] = srcZone
+    obj['aggrCount'] = currentSeenCount + aggrCount.to_i
+
+    $csMachineStats[csComputerName] = obj
   end
 end
 
@@ -71,14 +85,17 @@ def loadMachineStatToDb(conn)
   total = 0
   puts("INFO : ### Updating CS machine stat to DB...\n")
 
-  $csMachineStats.each do |csComputerName, aggrCount|
+  $csMachineStats.each do |csComputerName, obj|
     total = total + 1
 
-    puts("INFO : ### Updating [#{csComputerName}] count=[#{aggrCount}] to DB...\n")
+    aggrCount = obj['aggrCount']
+    zone = obj['zone']
+    puts("INFO : ### Updating [#{csComputerName}], zone=[#{zone}], count=[#{aggrCount}] to DB...\n")
 
     obj = Hash.new()
     obj['name'] = csComputerName
     obj['lastSeenEventCount'] = aggrCount
+    obj['zone'] = zone
     upsertMachineStatData(conn, obj, total)
   end
 
@@ -148,7 +165,7 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
     customField5, customField6, customField7, customField8, customField9 = attributes.split("^")
     #Custom Fields : category,serverityName,tags,eventType, csTechnique,csTactic,csIncidentId,csFineScore,csFineScoreTxt
 
-    populateMachineStat(csComputerName, aggrCount)
+    populateMachineStat(csComputerName, srcNetwork, aggrCount)
   elsif (type == 'aggr_zeek_intel_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport, srcIp, dstIp,
     customField1, customField2, customField3, customField4, customField5 = attributes.split("^")
