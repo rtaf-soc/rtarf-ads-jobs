@@ -165,7 +165,12 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
     customField5, customField6, customField7, customField8, customField9 = attributes.split("^")
     #Custom Fields : category,serverityName,tags,eventType, csTechnique,csTactic,csIncidentId,csFineScore,csFineScoreTxt
 
-    populateMachineStat(csComputerName, srcNetwork, aggrCount)
+    zone = ""
+    if (customField3 =~ /^SensorGroupingTags\/(.+?),.+$/)
+      zone = $1
+    end
+
+    populateMachineStat(csComputerName, zone, aggrCount)
   elsif (type == 'aggr_zeek_intel_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport, srcIp, dstIp,
     customField1, customField2, customField3, customField4, customField5 = attributes.split("^")
