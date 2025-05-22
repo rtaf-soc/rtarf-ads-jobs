@@ -20,9 +20,9 @@ csv_url = "https://docs.google.com/spreadsheets/d/#{sheetKey}/export?format=csv&
 #csv_url = "https://docs.google.com/spreadsheets/d/#{sheetKey}/export?format=csv&gid=422684088"
 
 # อ่านไฟล์จาก URL
-#csv_content = URI.open(csv_url).read
+multiline_string = URI.open(csv_url).read
 
-multiline_string = File.read("news.csv")
+#multiline_string = File.read("news.csv")
 line_no = 0
 csv_content = ""
 
