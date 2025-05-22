@@ -93,8 +93,8 @@ def upsertData1(dbConn, obj, seq)
         (
             gen_random_uuid(),
             '#{escape_char(eventNo)}',
+             '#{escape_char(eventDate)}',
             '#{escape_char(incidentType)}',
-            '#{escape_char(eventDate)}',
             '#{escape_char(orgId)}',
             '#{escape_char(description)}',
             '#{escape_char(targetAddress)}',
