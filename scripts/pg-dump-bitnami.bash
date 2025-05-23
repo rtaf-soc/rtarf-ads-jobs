@@ -23,6 +23,7 @@ echo "POSTGRES_USER=[${POSTGRES_USER}]"
 echo "OUT_FILE_NAME=[${OUT_FILE_NAME}]"
 echo "TARGET_DIR=[${TARGET_DIR}]"
 echo "DB=[${DB}]"
+echo "FLAG1=[${FLAG1}]"
 
 cd ${TARGET_DIR}
 # Delete the previous backup file
