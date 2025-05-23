@@ -2,6 +2,7 @@
 
 echo "BACKUP_NAME_PREFIX = [${BACKUP_NAME_PREFIX}]"
 echo "EXTENSION = [${EXTENSION}]"
+echo "EXCLUDE_FLAG = [${EXCLUDE_FLAG}]"
 
 NAME_PREFIX=${BACKUP_NAME_PREFIX}
 EXT=${EXTENSION}
@@ -31,7 +32,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Running [${SCRIPT_FILE}] in pod=[${TARGET_POD}], namespace=[${TARGET_NS}]"
-kubectl exec -i -n ${TARGET_NS} ${TARGET_POD} -- bash ${TARGET_DIR}/${SCRIPT_FILE} ${PG_USER} ${DMP_FILE} ${TARGET_DIR}
+kubectl exec -i -n ${TARGET_NS} ${TARGET_POD} -- bash ${TARGET_DIR}/${SCRIPT_FILE} "${PG_USER}" "${DMP_FILE}" "${TARGET_DIR}" "${EXCLUDE_FLAG}"
 if [ $? -ne 0 ]; then
     exit 1
 fi
