@@ -216,6 +216,10 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
     dataSet, srcNetwork, dstNetwork, protocol, transport,
     customField1, customField2 = attributes.split("^")
     #mailFrom,mailTo
+  elsif (type == 'aggr_panw_v1')
+    dataSet, srcNetwork, dstNetwork, protocol, transport,
+    customField1, customField2, customField3, customField4, customField5, customField6 = attributes.split("^")
+    #srcCountry,destCountry,action,hostname,sourceIp,destIp
   end
 
   loaderName = "log-aggregate-loader.rb"
@@ -474,5 +478,9 @@ totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
 
 type = 'aggr_zeek_smtp_v1'
+totalLoad = load_log_aggregate(conn, redis, type)
+puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+
+type = 'aggr_panw_v1'
 totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
