@@ -13,7 +13,7 @@ end
 
 $stdout.sync = true
 
-def loadTorMap(inputFile, cacheKey, mode)
+def loadTorMap(redis, inputFile, cacheKey, mode)
   totalLoad = 0
   orgId = ENV["ORG_ID"]
 
@@ -61,8 +61,8 @@ if (mode != 'local')
   end
 end
 
-totalLoad = loadTorMap('tor-nodes-guard.cfg', 'tor-guard-ip', mode)
+totalLoad = loadTorMap(redis, 'tor-nodes-guard.cfg', 'tor-guard-ip', mode)
 puts("INFO : ### Done loading [#{totalLoad}] TOR-guard records to cache\n")
 
-totalLoad = loadTorMap('tor-nodes-exit.cfg', 'tor-exit-ip', mode)
+totalLoad = loadTorMap(redis, 'tor-nodes-exit.cfg', 'tor-exit-ip', mode)
 puts("INFO : ### Done loading [#{totalLoad}] TOR-exit records to cache\n")
