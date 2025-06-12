@@ -218,8 +218,9 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
     #mailFrom,mailTo
   elsif (type == 'aggr_panw_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport,
-    customField1, customField2, customField3, customField4, customField5, customField6 = attributes.split("^")
-    #srcCountry,destCountry,action,hostname,sourceIp,destIp
+    customField1, customField2, customField3, customField4, customField5, customField6,
+    customField7, customField8, customField9, customField10, customField11, customField2 = attributes.split("^")
+    #srcCountry,destCountry,action,hostname,sourceIp,destIp,srcPort,destPort,srcLat,srcLon,destLat,destLon
   end
 
   loaderName = "log-aggregate-loader.rb"
@@ -407,6 +408,11 @@ puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
 loadMachineStatToDb(conn)
 
 
+type = 'aggr_panw_v1'
+totalLoad = load_log_aggregate(conn, redis, type)
+puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+
+
 type = 'aggr_network_v3'
 totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
@@ -478,9 +484,5 @@ totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
 
 type = 'aggr_zeek_smtp_v1'
-totalLoad = load_log_aggregate(conn, redis, type)
-puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
-
-type = 'aggr_panw_v1'
 totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
