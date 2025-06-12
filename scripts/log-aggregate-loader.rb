@@ -219,7 +219,7 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
   elsif (type == 'aggr_panw_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport,
     customField1, customField2, customField3, customField4, customField5, customField6,
-    customField7, customField8, customField9, customField10, customField11, customField2 = attributes.split("^")
+    customField7, customField8, customField9, customField10, customField11, customField12 = attributes.split("^")
     #srcCountry,destCountry,action,hostname,sourceIp,destIp,srcPort,destPort,srcLat,srcLon,destLat,destLon
   end
 
