@@ -347,7 +347,7 @@ def load_log_aggregate(dbConn, redisObj, aggrType)
       previousAggrCount = redisObj.get(upsertKey)
 
       needUpsert = false
-      if (previousAggrCount.nil)
+      if (previousAggrCount.nil?)
         # Never seen that data in cache
         needUpsert = true
       else
