@@ -334,6 +334,7 @@ def load_log_aggregate(dbConn, redisObj, aggrType)
   puts("DEBUG : Start loading log aggregate [#{aggrType}] from Redis...\n")
 
   cnt = 0
+  upsertCount = 0
   redisObj.scan_each(match: "#{aggrType}!!*") do |key|
       aggrCount = redisObj.get(key)
 
@@ -342,10 +343,27 @@ def load_log_aggregate(dbConn, redisObj, aggrType)
       cnt = cnt + 1
       puts("DEBUG_00 : [#{cnt}] Loading [#{type}] [#{key}] [#{keyword}] [#{aggrCount}]\n")
 
-      upsertData(dbConn, type, keyword, aggrCount, cnt)
+      upsertKey = "load_log_aggregate:#{key}"
+      previousAggrCount = redisObj.get(upsertKey)
+
+      needUpsert = false
+      if (previousAggrCount.nil)
+        # Never seen that data in cache
+        needUpsert = true
+      else
+        if (previousAggrCount.to_i != aggrCount.to_i)
+          # Need to call upsert
+          needUpsert = true
+        end
+      end
+
+      if (needUpsert)
+        upsertData(dbConn, type, keyword, aggrCount, cnt)
+        upsertCount = upsertCount + 1
+      end
   end
 
-  puts("DEBUG : Done loading [#{cnt}] records from Redis\n")
+  puts("DEBUG : Done loading [#{aggrType}] readCount=[#{cnt}], upsertCount=[#{upsertCount}] to PostgreSQL\n")
   return cnt
 end
 
@@ -417,21 +435,21 @@ type = 'aggr_network_v3'
 totalLoad = load_log_aggregate(conn, redis, type)
 puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
 
-type = 'aggr_network_mitr_dst_ip_v1'
-totalLoad = load_log_aggregate(conn, redis, type)
-puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+#type = 'aggr_network_mitr_dst_ip_v1'
+#totalLoad = load_log_aggregate(conn, redis, type)
+#puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
 
-type = 'aggr_network_mitr_src_ip_v1'
-totalLoad = load_log_aggregate(conn, redis, type)
-puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+#type = 'aggr_network_mitr_src_ip_v1'
+#totalLoad = load_log_aggregate(conn, redis, type)
+#puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
 
-type = 'aggr_network_misp_dst_ip_tlp_v1'
-totalLoad = load_log_aggregate(conn, redis, type)
-puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+#type = 'aggr_network_misp_dst_ip_tlp_v1'
+#totalLoad = load_log_aggregate(conn, redis, type)
+#puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
 
-type = 'aggr_network_misp_src_ip_tlp_v1'
-totalLoad = load_log_aggregate(conn, redis, type)
-puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
+#type = 'aggr_network_misp_src_ip_tlp_v1'
+#totalLoad = load_log_aggregate(conn, redis, type)
+#puts("INFO : ### Done loading [#{type}] [#{totalLoad}] records to PostgreSQL\n")
 
 type = 'aggr_network_blacklist_dest_ip_v1'
 totalLoad = load_log_aggregate(conn, redis, type)
