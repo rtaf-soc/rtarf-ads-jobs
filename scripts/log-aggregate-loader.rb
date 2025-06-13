@@ -360,6 +360,8 @@ def load_log_aggregate(dbConn, redisObj, aggrType)
       if (needUpsert)
         upsertData(dbConn, type, keyword, aggrCount, cnt)
         upsertCount = upsertCount + 1
+
+        redisObj.setex(upsertKey, 86400, aggrCount)
       end
   end
 
