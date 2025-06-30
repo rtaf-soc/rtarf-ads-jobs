@@ -108,12 +108,12 @@ def upsertData(dbConn, incidentObj, seq)
             gen_random_uuid(),
             '#{escape_char(orgId)}',
             '#{escape_char(caseId)}',
-            TO_DATE('#{createdAtStr}', 'YYYYMMDD HH24:MI:SS'),
+            TO_TIMESTAMP('#{createdAtStr}', 'YYYYMMDD HH24:MI:SS'),
             '#{escape_char(status)}',
             '#{escape_char(description)}',
             '#{escape_char(incidentType)}',
             '#{escape_char(owner)}',
-            TO_DATE('#{createdAtStr}', 'YYYYMMDD HH24:MI:SS'),
+            TO_TIMESTAMP('#{createdAtStr}', 'YYYYMMDD HH24:MI:SS'),
 
             '#{escape_char(title)}',
             '#{escape_char(id)}',
@@ -124,8 +124,8 @@ def upsertData(dbConn, incidentObj, seq)
             '#{escape_char(resolutionStatus)}',
             '#{escape_char(tlp)}',
             '#{escape_char(impactStatus)}',
-            TO_DATE('#{startDateStr}', 'YYYYMMDD HH24:MI:SS'),
-            TO_DATE('#{updateAtStr}', 'YYYYMMDD HH24:MI:SS'),
+            TO_TIMESTAMP('#{startDateStr}', 'YYYYMMDD HH24:MI:SS'),
+            TO_TIMESTAMP('#{updateAtStr}', 'YYYYMMDD HH24:MI:SS'),
             '#{escape_char(tags)}'
         )
         ON CONFLICT(case_no)
@@ -144,8 +144,8 @@ def upsertData(dbConn, incidentObj, seq)
           solution_status = '#{escape_char(resolutionStatus)}',
           case_tlp = '#{escape_char(tlp)}',
           impact_status = '#{escape_char(impactStatus)}',
-          start_date = TO_DATE('#{startDateStr}', 'YYYYMMDD HH24:MI:SS'),
-          update_at = TO_DATE('#{updateAtStr}', 'YYYYMMDD HH24:MI:SS'),
+          start_date = TO_TIMESTAMP('#{startDateStr}', 'YYYYMMDD HH24:MI:SS'),
+          update_at = TO_TIMESTAMP('#{updateAtStr}', 'YYYYMMDD HH24:MI:SS'),
           tags = '#{escape_char(tags)}'
         "
     end
