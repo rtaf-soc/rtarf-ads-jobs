@@ -67,8 +67,10 @@ def upsertData(dbConn, incidentObj, seq)
   startDateStr = epochMilliSecToString(startDate)
   updateAtStr = epochMilliSecToString(updatedAt)
 
-  puts("INFO : [#{caseId}] [#{createdAtStr}] [#{id}]")
-  
+  puts("INFO : [#{caseId}] createdAtMilliSec=[#{createdAt}] [#{createdAtStr}] [#{id}]")
+  puts("INFO : [#{caseId}] startDateMilliSec=[#{startDate}] [#{startDateStr}] [#{id}]")
+  puts("INFO : [#{caseId}] updatedAtMilliSec=[#{updatedAt}] [#{updateAtStr}] [#{id}]")
+
   begin
     dbConn.transaction do |con|
         con.exec "INSERT INTO \"Cases\" 
