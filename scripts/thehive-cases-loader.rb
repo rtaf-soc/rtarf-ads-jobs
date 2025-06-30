@@ -33,6 +33,10 @@ def escape_char(str)
 end
 
 def epochMilliSecToString(epochMilliSec)
+  if (epochMilliSec.nil?)
+    return 'NULL'
+  end
+
   second = epochMilliSec / 1000.0
   time = Time.at(second)
   dateTimeStr = time.strftime("%Y%m%d %H:%M:%S")
