@@ -32,12 +32,13 @@ def escape_char(str)
   return "#{str}".tr("'", "")
 end
 
-def epochMilliSecToString(epochMilliSec)
-  if (epochMilliSec.nil?)
-    return 'NULL'
+def epochMilliSecToString(epochMilliSec, ifNullSec)
+  epoch = epochMilliSec
+  if (epoch.nil?)
+    epoch = ifNullSec
   end
 
-  second = epochMilliSec / 1000.0
+  second = epoch / 1000.0
   time = Time.at(second)
   dateTimeStr = time.strftime("%Y%m%d %H:%M:%S")
 
@@ -67,9 +68,9 @@ def upsertData(dbConn, incidentObj, seq)
 
   orgId = "default"
 
-  createdAtStr = epochMilliSecToString(createdAt)
-  startDateStr = epochMilliSecToString(startDate)
-  updateAtStr = epochMilliSecToString(updatedAt)
+  createdAtStr = epochMilliSecToString(createdAt, createdAt)
+  startDateStr = epochMilliSecToString(startDate, createdAt)
+  updateAtStr = epochMilliSecToString(updatedAt, createdAt)
 
   puts("INFO : [#{caseId}] createdAtMilliSec=[#{createdAt}] [#{createdAtStr}] [#{id}]")
   puts("INFO : [#{caseId}] startDateMilliSec=[#{startDate}] [#{startDateStr}] [#{id}]")
