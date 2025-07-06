@@ -64,17 +64,35 @@ def upsertData(dbConn, incidentObj, seq)
   startDate = incidentObj['startDate']
   updatedAt = incidentObj['updatedAt']
   incidentType = incidentObj['_type']
-  tags = incidentObj['tags'].join(";")
+  
+  tags = ''
+  if (!incidentObj['tags'].nil?)
+    tags = incidentObj['tags'].join(";")
+  end
+
+  flags = incidentObj['flag']
+  customFields = incidentObj['customFields'].to_s
+  createdBy = incidentObj['createdBy']
+  metrics = incidentObj['metrics'].to_s
+  endDate = incidentObj['endDate']
+  mergedInto = incidentObj['mergeInto']
+
+  mergedFrom = ''
+  if (!incidentObj['mergeFrom'].nil?)  
+    mergedFrom = incidentObj['mergeFrom'].join(";")
+  end
 
   orgId = "default"
 
   createdAtStr = epochMilliSecToString(createdAt, createdAt)
   startDateStr = epochMilliSecToString(startDate, createdAt)
   updateAtStr = epochMilliSecToString(updatedAt, createdAt)
+  endDateStr = epochMilliSecToString(endDate, createdAt)
 
   puts("INFO : [#{caseId}] createdAtMilliSec=[#{createdAt}] [#{createdAtStr}] [#{id}]")
   puts("INFO : [#{caseId}] startDateMilliSec=[#{startDate}] [#{startDateStr}] [#{id}]")
   puts("INFO : [#{caseId}] updatedAtMilliSec=[#{updatedAt}] [#{updateAtStr}] [#{id}]")
+  puts("INFO : [#{caseId}] endDateMilliSec=[#{endDate}] [#{endDateStr}] [#{id}]")
 
   begin
     dbConn.transaction do |con|
@@ -101,7 +119,15 @@ def upsertData(dbConn, incidentObj, seq)
             impact_status,
             start_date,
             update_at,
-            tags
+            tags,
+
+            flags,
+            custom_fields,
+            created_by,
+            metrics,
+            case_end_date,
+            merge_into,
+            merge_from
         )
         VALUES
         (
@@ -126,7 +152,15 @@ def upsertData(dbConn, incidentObj, seq)
             '#{escape_char(impactStatus)}',
             TO_TIMESTAMP('#{startDateStr}', 'YYYYMMDD HH24:MI:SS'),
             TO_TIMESTAMP('#{updateAtStr}', 'YYYYMMDD HH24:MI:SS'),
-            '#{escape_char(tags)}'
+            '#{escape_char(tags)}',
+
+            '#{escape_char(flags)}',
+            '#{escape_char(customFields)}',
+            '#{escape_char(createdBy)}',
+            '#{escape_char(metrics)}',
+            TO_TIMESTAMP('#{endDateStr}', 'YYYYMMDD HH24:MI:SS'),
+            '#{escape_char(mergedInto)}',
+            '#{escape_char(mergedFrom)}'
         )
         ON CONFLICT(case_no)
         DO UPDATE SET 
@@ -146,7 +180,15 @@ def upsertData(dbConn, incidentObj, seq)
           impact_status = '#{escape_char(impactStatus)}',
           start_date = TO_TIMESTAMP('#{startDateStr}', 'YYYYMMDD HH24:MI:SS'),
           update_at = TO_TIMESTAMP('#{updateAtStr}', 'YYYYMMDD HH24:MI:SS'),
-          tags = '#{escape_char(tags)}'
+          tags = '#{escape_char(tags)}',
+
+          flags = '#{escape_char(flags)}',
+          custom_fields = '#{escape_char(customFields)}',
+          created_by = '#{escape_char(createdBy)}',
+          metrics = '#{escape_char(metrics)}',
+          case_end_date = TO_TIMESTAMP('#{endDateStr}', 'YYYYMMDD HH24:MI:SS'),
+          merge_into = '#{escape_char(mergedInto)}',
+          merge_from = '#{escape_char(mergedFrom)}'
         "
     end
   rescue PG::Error => e
@@ -211,7 +253,8 @@ seq = 0
 
 arr.each do |incident|
   seq = seq + 1
+
+  #json_string = incident.to_json
+  #puts json_string
   upsertData(conn, incident, seq)
 end
-
-
