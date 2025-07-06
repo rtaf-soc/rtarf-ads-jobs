@@ -1,0 +1,9 @@
+
+flag: flags
+* customFields: custom_fields
+* tags: tags
+createdBy: created_by
+* metrics: metrics
+endDate: case_end_date
+mergeInto: merge_into
+* mergeFrom: merge_from
