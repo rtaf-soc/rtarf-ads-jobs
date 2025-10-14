@@ -26,4 +26,4 @@ RUN gcloud -v
 WORKDIR /scripts
 COPY scripts/ .
 
-RUN gem install redis pg 
+RUN gem install redis pg watir
