@@ -51,7 +51,7 @@ def upsertMachineStatData(dbConn, obj, seq)
         "
     end
   rescue PG::Error => e
-    puts("ERROR - Insert data to DB upsertData() [#{e.message}]")
+    puts("ERROR - Insert data to DB upsertMachineStatData() [#{e.message}]")
     exit 102 # Terminate immediately
   end
 end
@@ -109,7 +109,12 @@ end
 def upsertData(dbConn, type, keyword, aggrCount, seq)
 
   if (keyword.nil?)
-    puts("INFO : [keyword] is null in upsertData()\n")
+    puts("INFO : keyword is null in upsertData()\n")
+    return
+  end
+
+  if (keyword.length > 2000)
+    puts("INFO : keyword is too long in upsertData() --> [#{keyword}]\n")
     return
   end
 
