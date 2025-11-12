@@ -90,3 +90,17 @@ def invoke_api(orgId, apiName, apiObj, endpointObj, dataObj)
 
   return status, responseStr
 end
+
+def connect_db(host, db, user, password)
+  begin
+      con = PG.connect(:host => host, 
+          :dbname => db, 
+          :user => user, 
+          :password => password)
+
+  rescue PG::Error => e
+      puts("ERROR - Connect to DB [#{e.message}]")
+  end
+
+  return con
+end
