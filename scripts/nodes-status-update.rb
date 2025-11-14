@@ -4,6 +4,7 @@ require 'pg'
 require 'time'
 require 'uri'
 require 'redis'
+require 'json'
 require './utils'
 
 if File.exist?('env.rb')
@@ -66,7 +67,27 @@ def update_node_status(conn, node, nodeStatus)
 end
 
 def get_node_status(node)
-  return "{}"
+  highCount = rand(0..2)
+  mediumCount = rand(0..2)
+  lowCount = rand(0..2)
+
+  threatCount = highCount + mediumCount + lowCount
+
+  isAlert = "false"
+  if (threatCount > 3)
+    isAlert = "true"
+  end
+
+  statusObj = {
+    IsAlert: isAlert,
+    ThreatCount: threatCount,
+    ThreatLevelHighCount: highCount,
+    ThreatLevelMediumCount: mediumCount,
+    ThreatLevelLowCount: lowCount,
+  }
+
+  json_str = statusObj.to_json
+  return json_str
 end
 
 environment = ENV['ENVIRONMENT']
