@@ -221,12 +221,12 @@ def upsertData(dbConn, type, keyword, aggrCount, seq)
     dataSet, srcNetwork, dstNetwork, protocol, transport,
     customField1, customField2 = attributes.split("^")
     #mailFrom,mailTo
-  elsif (type == 'aggr_panw_v1')
+  elsif (type == 'aggr_xsiam_incident_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport,
     customField1, customField2, customField3, customField4, customField5, 
     customField6,customField7 = attributes.split("^")
     #severity,incidentId,status,alertCategory,description,incidentDomain,aggregateScore
-  elsif (type == 'aggr_xsiam_incident_v1')
+  elsif (type == 'aggr_panw_v1')
     dataSet, srcNetwork, dstNetwork, protocol, transport,
     customField1, customField2, customField3, customField4, customField5, customField6,
     customField7, customField8, customField9, customField10, customField11, customField12 = attributes.split("^")
