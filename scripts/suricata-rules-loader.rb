@@ -38,6 +38,8 @@ def upsertData(dbConn, line, option)
   ruleUrl = ENV['RULE_URL']
 
   name = option['msg'] || 'No Name'
+  name = name.gsub(/\A"|"\z/, "")
+
   sid = option['sid'] || '0'
   rev = option['rev'] || '0'
   description = "Suricata rule with SID = [#{sid}]"
